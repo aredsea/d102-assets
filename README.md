@@ -19,18 +19,24 @@
 ## 사용법
 
 ```html
-<video autoplay muted loop playsinline preload="metadata"
-       poster="https://aredsea.github.io/d102-assets/video/sm-wave-poster.jpg">
-  <source src="https://aredsea.github.io/d102-assets/video/sm-wave.webm" type="video/webm">
-  <source src="https://aredsea.github.io/d102-assets/video/sm-wave.mp4"  type="video/mp4">
-</video>
+<video autoplay muted loop playsinline preload="auto"
+       src="https://aredsea.github.io/d102-assets/video/sm-wave.mp4"
+       poster="https://aredsea.github.io/d102-assets/video/sm-wave-poster.jpg"></video>
 ```
+
+🔴 **h.264(mp4) 단독으로 쓴다.** VP9(webm)를 먼저 두면 소프트웨어 디코딩으로 넘어가 버벅인다 —
+h.264 는 사실상 모든 기기에서 하드웨어 가속을 받는다. 화면 밖에서는 `IntersectionObserver` 로 `pause()` 한다.
 
 ## 자산
 
 | 파일 | 내용 | 사양 |
 |---|---|---|
-| `video/sm-wave.*` | 2026 Summer Memories 기획전 — 파도 배경 | 1280×900 · 30fps · 6.5초 무이음 루프 |
+| `video/sm-wave.mp4` | 2026 Summer Memories 기획전 — 파도 배경 | 1024×650 · 30fps · **11초 루프** · 3.0MB |
 
-원본: Pexels 5668619 (ROMAN ODINTSOV). Pexels 라이선스 — 상업적 사용·수정 허용, 출처 표기 불요.
-끝 0.9초를 앞머리에 겹쳐(crossfade) 루프 이음매를 없앴습니다.
+원본: Pexels 32260220 (Engin Akyurt). Pexels 라이선스 — 상업적 사용·수정 허용, 출처 표기 불요.
+
+**루프 만드는 법** — 크로스페이드는 쓰지 않는다. 물에서는 이중노출로 보여 오히려 루프 지점을 드러낸다.
+대신 원본 전체를 30fps 로 훑어 **첫 프레임과 가장 잘 맞물리는 끝 프레임 쌍**을 찾아 하드컷한다
+(video texture 기법). 이 클립은 22.40s→33.43s, 이음매가 인접 프레임 평균차의 **1.98배**.
+⚠️ 잔잔한 소스일수록 기준선이 낮아 루프가 잘 붙는다(부서지는 파도 8.53s 는 2.81배로 눈에 띄었다).
+물빛 반짝임은 압축을 폭발시키므로 `gblur=sigma=1.5` 로 눌렀다 — 얕은 심도 질감이라 오히려 캠페인에 맞는다.
